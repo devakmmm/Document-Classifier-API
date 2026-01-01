@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
 from src.features import TextFeaturizer
 from src.lr_from_scratch import OneVsRestLogReg
+import time
 
 app = FastAPI(title="Document Classifier API", version="1.1")
 
@@ -15,7 +16,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "https://*.onrender.com",
-        "https://document-classifier-ui.onrender.com",  # Update with your actual frontend URL
+        "https://document-classifier-ui.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -25,7 +26,7 @@ app.add_middleware(
 class PredictRequest(BaseModel):
     text: str = Field(..., min_length=5)
     top_k: int = 3
-    threshold: float = 0.65  # abstain if confidence < threshold
+    threshold: float = 0.65
 
 class PredictResponse(BaseModel):
     label: str
@@ -46,13 +47,19 @@ model = OneVsRestLogReg()
 model.W = W
 model.b = b
 
+# Track startup time
+startup_time = time.time()
+
 @app.get("/")
 def root():
     return {
         "message": "Document Classifier API",
         "version": "1.1",
+        "status": "running",
+        "uptime_seconds": round(time.time() - startup_time, 2),
         "endpoints": {
             "health": "/health",
+            "ping": "/ping",
             "predict": "/predict",
             "docs": "/docs"
         }
@@ -60,7 +67,19 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"ok": True, "status": "running"}
+    """Health check endpoint for Render"""
+    return {
+        "ok": True,
+        "status": "healthy",
+        "uptime_seconds": round(time.time() - startup_time, 2),
+        "model_loaded": model.W is not None,
+        "features_loaded": featurizer.vectorizer is not None
+    }
+
+@app.get("/ping")
+def ping():
+    """Simple ping endpoint to keep service alive"""
+    return {"ping": "pong", "timestamp": time.time()}
 
 @app.post("/predict", response_model=PredictResponse)
 def predict(req: PredictRequest):

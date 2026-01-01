@@ -1,0 +1,19 @@
+name: Keep API Alive
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API
+        run: |
+          curl -f https://your-render-url.onrender.com/ping || echo "Ping failed"
+          
+      - name: Health Check
+        run: |
+          curl -f https://your-render-url.onrender.com/health || echo "Health check failed"
