@@ -15,7 +15,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://*.onrender.com",
+        "https://document-classifier-api-1.onrender.com",
         "https://document-classifier-ui.onrender.com",
         "*"  # Allow all origins (remove in production for security)
     ],
