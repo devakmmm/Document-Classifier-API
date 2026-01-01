@@ -36,6 +36,3 @@ Thumbs.db
 # Environment
 .env
 .env.local
-
-# Data (optional - include if you want to keep data in repo)
-# data/

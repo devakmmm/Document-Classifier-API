@@ -20,7 +20,7 @@ const AceternityDocClassifier = () => {
     
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/predict', {
+      const response = await fetch('https://document-classifier-api-fewk.onrender.com/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, top_k: 3, threshold: 0.65 })
@@ -29,7 +29,6 @@ const AceternityDocClassifier = () => {
       setResult(data);
     } catch (error) {
       console.error('Classification error:', error);
-      // Optionally show error to user
       alert('Failed to classify document. Please ensure the API is running.');
     }
     setLoading(false);

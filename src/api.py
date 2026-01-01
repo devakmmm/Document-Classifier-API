@@ -17,6 +17,7 @@ app.add_middleware(
         "http://localhost:3000",
         "https://*.onrender.com",
         "https://document-classifier-ui.onrender.com",
+        "*"  # Allow all origins (remove in production for security)
     ],
     allow_credentials=True,
     allow_methods=["*"],
